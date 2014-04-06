@@ -74,6 +74,7 @@ def submit():
     selected_parts = part_prompt(metadata.part_data)
     
     for part in selected_parts:
+#        print metadata.url, part.sid, get_source(part.source)
         (login, ch, state, ch_aux) = get_challenge(metadata.url, login, part.sid)
         if not login or not ch or not state:
             print '\n!! Error: %s\n' % login

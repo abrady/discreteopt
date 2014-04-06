@@ -1,131 +1,89 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
-def make_node_neighbors(edges):
-    max_neighbor = reduce(max, map(max, edges))
-    node_neighbors = [ {} for x in range(max_neighbor+1) ]
-    for l,r in edges:
-        node_neighbors[l][r] = l
-        node_neighbors[r][l] = r
-    return node_neighbors
-
-def is_solution(node_colors, node_neighbors):
-    for i in range(len(node_colors)):
-        color = node_colors[i]        
-        for n in node_neighbors[i]:
-            if color == node_colors[n]:
-                return False
-    return True
-
-def solve_it_recurrance(edges, node_count):
-    '''
-    Quick and dirty recurrance solution. this just tries a color and then makes
-    sure all the states are valid
-    '''
-    node_colors = [ 0 for x in range(node_count)]
-    node_neighbors = make_node_neighbors(edges)
-    colored_nodes = 0
-    while True:
-        # increment the color
-        # if a node wraps around, increment the next node's color
-        i = 0
-        for i in range(node_count):
-            node_colors[i] += 1
-            if node_colors[i] < 4:
-                break
-            node_colors[i] = 0
-
-        # safety check
-        if i == node_count:
-            print "no solution, shouldn't happen"
-            return []
-
-        # check solution
-        if is_solution(node_colors, node_neighbors):
-            return node_colors
-    print "returning at end?"
+import copy
 
 class Node:
-    def __init__(self):
+    def __init__(self,i):
         self.neighbors = []
-        self.color = 0
+        self.color = -1
+        self.index = i
 
     @staticmethod
     def nodesFromEdges(edges, node_count):
-        nodes = [ Node() for x in range(node_count) ]
+        nodes = [ Node(x) for x in range(node_count) ]
         for (l,r) in edges:
-            nodes[l].neighbors.append(r)
-            nodes[r].neighbors.append(l)
+            nodes[l].neighbors.append(nodes[r])
+            nodes[r].neighbors.append(nodes[l])
+        for node in nodes:
+            node.degree = len(node.neighbors)
+        nodes.sort(lambda na,nb: na.degree - nb.degree)
         return nodes
 
     def __repr__(self):
-        return "Node("+str(self.color)+", "+str(self.neighbors)+")"
+        return "Node("+str(self.color)+", "+str([n.index for n in self.neighbors])+")"
 
     def __str__(self):
         return str(self.color)
 
 class State:
     def __repr__(self):
-        return "State("+str(self.nodes)+", "+str(self.stack)+")"
+        return "State("+str(self.nodes)+')'
     
     def __init__(self, edges, node_count):
         self.nodes = Node.nodesFromEdges(edges, node_count)
-        self.stack = []
-
-    def isSolution(self):
-        for node in self.nodes:
-            if node.color == 0:
-                return False # incomplete
-            for neighbor in [ nodes[i] for i in node.neighbors ]:
-                if node.color == neighbor.color:
-                    return False
-        return True
-
-    def pickNode(self):
-        res = None
-        for node in self.nodes:
-            if node.color == 0:
-                res = node
-                break
-        self.stack.append(res)
-        return res
-
-    def assignNodeColor(self, node):
-        neighbor_colors = {self.nodes[i].color:True for i in node.neighbors}
-        color = 1
-        while neighbor_colors.has_key(color):
-            color += 1
-        node.color = color
-
-    def backTrack(self):
-        node = self.stack.pop()
-        node.color = 0;
-        return self
-
-def solve_it_propogation(edges, node_count):
-    '''The idea of this approach is to have a constraint system that is updated
-    with choices made by the search component. In the case of graph coloring:
-    the constraints are that picking a color reduces the choices of its neighbors colors
-
-    This is just a dumb greedy algorithm
-    '''
-    state = State(edges, node_count)
+        self.uncolored = self.nodes
+        self.nodeCount = node_count
+        self.greedy = False
+        
+        self.colored = []
+        self.max_degree = max([len(n.neighbors) for n in self.nodes])
     
-    # pick a node
-    # assign color
-    # update neighbors
-    # detect failure
-    # search algo: 
-    while True:
-        node = state.pickNode() # get an uncolored node
-        if not node:
-            break
-        # pick a color to try
-        state.assignNodeColor(node)
+    def freeColors(self, node, num_colors):
+        free_colors = {}.fromkeys(range(num_colors))
+        for neighbor in node.neighbors:
+            if neighbor.color < 0 or not neighbor.color in free_colors:
+                continue
+            free_colors.pop(neighbor.color)
+        return free_colors.keys()
 
-    res = [ n.color - 1 for n in state.nodes ]
-    return res
+import argparse
+from collections import namedtuple
+ColoredResult = namedtuple("Result", ['numColors', 'nodes'])
+ 
+def solve_node(state, node_i, num_colors, min_result):
+    if state.greedy:
+    # no point in descending, num_colors can only go up
+    if min_result.numColors <= num_colors:
+        #print "min result better, returning",num_colors, min_result.numColors
+        return min_result
 
+    # all nodes colored, check for new better solution
+    if node_i == state.nodeCount:
+        print "new best result",num_colors, node_i
+        return ColoredResult(num_colors, copy.deepcopy(state.nodes))
+
+    # we only get to this part if we're on a path to fewer 
+    # colors than an existing solution 
+
+    node = state.nodes[node_i]
+
+    free_colors = state.freeColors(node,num_colors)
+    to_try = [(color, num_colors) for color in free_colors]
+    to_try.append((num_colors,num_colors+1))
+    would_have_broken_out = False
+    for color, n_colors in to_try:
+        node.color = color
+        res = solve_node(state, node_i+1, n_colors, min_result)
+        if res.numColors < min_result.numColors:
+            #print node_i, "new best result:", res.numColors
+            min_result = res
+    node.color = -1
+    return min_result
+
+def solve_it_recurrance(edges, node_count):
+    state = State(edges, node_count)
+    res = solve_node(state, 0, 0, ColoredResult(sys.maxint, []))
+    return (res.numColors, [ n.color for n in res.nodes ])
     
 def solve_it(input_data):
     # Modify this code to run your optimization algorithm
@@ -147,14 +105,21 @@ def solve_it(input_data):
     # every node has its own color
     # solution = range(0, node_count)
     # solution = solve_it_recurrance(edges, node_count)
-    solution = solve_it_propogation(edges, node_count)
+    # solution = solve_it_greedy(edges, node_count)
+    (num_colors, solution) = solve_it_recurrance(edges, node_count)
 
     # prepare the solution in the specified output format
-    output_data = str(node_count) + ' ' + str(0) + '\n'
+    output_data = str(num_colors) + ' ' + str(1) + '\n'
     output_data += ' '.join(map(str, solution))
 
     return output_data
 
+
+# gc_20_1: 3
+# gc_20_3: 5
+# gc_20_5: 5
+# gc_20_7: 8
+# gc_20_9: 11
 
 def solve_it_file(fn):
     file_location = fn
