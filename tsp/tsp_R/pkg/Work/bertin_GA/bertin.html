@@ -1,0 +1,265 @@
+<html>
+<head>
+<title>Optimizing the Ordering</title>
+<meta name="author" content="Niermann">
+<meta name="keywords" content="Evolutionary Computation Tables Ordering Bertin">
+<meta name="generator" content="Ulli Meybohms HTML EDITOR">
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#FF0000" alink="#FF0000" vlink="#FF0000">
+
+<font size="+2">Usage and Background </font><br>
+This page contains the source file <a href="bertin.r">bertin.r</a> which makes available
+the function <i>bertin()</i> and a matrix called <i>bertin.mat</i>.
+
+The function <i>bertin()</i> finds the best configuration of
+a given matrix with respect to conciseness using an evolutionary algorithm.
+
+The function is implemented under R: A Programming Environment for Data Analysis and
+Graphics (tested for Version 1.9.1).<br><br>
+
+To run this function, you first have to download the file to directictory c:\tmp
+(or any other directory of your choice) and start R.<br>
+> <font color="#0000FF">source("c:/tmp/bertin.r")</font><br>
+
+Alternatively, you might just type<br>
+><font color="#0000FF"> source(file="http://www.ewas.de/tables/bertin.r")</font><br><br>
+
+The function takes a matrix as an argument. The number of generations is an optional
+parameter called <i>generations</i> with the default value 200.So just try: <br>
+><font color="#0000FF"> bertin(bertin.mat)</font> <br>
+
+or use any numeric matrix <i>mymat</i> from your workspace:  <br>
+><font color="#0000FF"> bertin(mymat)</font> <br><br>
+
+Technically, the function works with every numerical matrix. However, you have to take care
+that the matrix columns (variables) are measured on equal footing or standardize them otherwise.<br><br>
+
+The method is describes in an article published in The American Statistician
+(Niermann, S.: Optimizing the Ordering of Tables with Evolutionary
+Computation).<br><br>
+
+<font size="+2">Local Functions </font><br>
+(needed by and defined in function <i>bertin()</i>)<br>
+<i>mutation.2opt</i> <br>
+<i>crossover.tables</i> <br>
+<i>fitness.table</i>  and<br>
+<i>stress</i> (needed by fitness.table).<br>  <br>
+
+<font size="+2">Local parameters of function <i>bertin()</i> </font><br>
+(You can use fix() to change their values).<br>
+<i>.x</i>: matrix subject to optimization of the ordering of rows and columns,<br>
+<i>.pmut</i>: mutation probability with 0<<i>pmut</i><1(default value: 0.5).<br>
+<i>.pcross</i>: crossover probability with 0<<i>pcross</i><1(default value: 0.5).<br>
+<i>.popsize</i>: number of individuals in each genetic population (default value: 20).<br><br>
+
+<font size="+2">A small example </font><br><br>
+
+We start with an initial table with 4 rows and 5 columns.<br>
+
+<center>
+INITIAL TABLE<br>
+<font size="+2">
+<table>
+ <tr>
+<th></th><th>column 1</th><th>column 2</th>  <th>column 3</th><th>column 4</th>
+<th>column5</th>
+</tr>
+<tr>
+<td><b>row 1</b></td><td align="center">1</td><td align="center">1</td>
+<td align="center">1</td><td align="center">1</td><td align="center">0</td>
+</tr>
+<tr>
+<td><b>row 2</b></td><td  align="center">0</td><td align="center">1</td>
+<td align="center">0</td><td  align="center">0</td><td  align="center">1</td>
+</tr>
+<tr>
+<td><b>row 3</b></td><td  align="center">0</td><td  align="center">1</td>
+<td align="center">0</td><td  align="center">1</td><td  align="center">0</td>
+</tr>
+<tr>
+<td><b>row 4</b></td><td  align="center">0</td><td  align="center">0</td>
+<td align="center">1</td><td  align="center">1</td><td  align="center">1</td>
+</tr>
+</table>
+<br><br>
+</font>
+</center>
+
+The STRESS value for this table is 60. The fitness is just defined to be the stress
+value multiplied by -1.<br>
+For this example, the number of individuals in the population is chosen to be 4.
+Each individual consists of two random permutations: (pi(4),pi(5)).<br>
+The start population might then be:
+
+<center>
+START POPULATION<br>
+<font size="+2">
+<table>
+<tr>
+<td>1</td><td>3</td><td>2</td><td>4</td>
+</tr>
+<tr>
+<td>3</td><td>4</td><td>4</td><td>2</td>
+</tr>
+<tr>
+<td>4</td><td>2</td><td>1</td><td>3</td>
+</tr>
+<tr>
+<td><u>2</u></td><td><u>1</u></td><td><u>3</u></td><td><u>1</u></td>
+</tr>
+<tr>
+<td>4</td><td>2</td><td>3</td><td>4</td>
+</tr>
+<tr>
+<td>3</td><td>3</td><td>5</td><td>1</td>
+</tr>
+<tr>
+<td>1</td><td>5</td><td>1</td><td>5</td>
+</tr>
+<tr>
+<td>5</td><td>1</td><td>2</td><td>2</td>
+</tr>
+ <tr>
+<td>2</td><td>4</td><td>4</td><td>3</td>
+</tr>
+</table>
+<br><br>
+</font>
+</center>
+
+Note that the first individual (left column of START POPULATION) represents the reordered
+table
+<center>
+<font size="+2">
+<table>
+<tr>
+<td align="center">1</td><td align="center">1</td>
+<td align="center">1</td><td align="center">0</td><td align="center">1</td>
+</tr>
+<tr>
+<td  align="center">1</td><td align="center">0</td>
+<td align="center">0</td><td  align="center">0</td><td  align="center">1</td>
+</tr>
+<tr>
+<td  align="center">1</td><td  align="center">1</td>
+<td align="center">0</td><td  align="center">1</td><td  align="center">0</td>
+</tr>
+<tr>
+<td  align="center">0</td><td  align="center">0</td>
+<td align="center">0</td><td  align="center">1</td><td  align="center">1</td>
+</tr>
+</table>
+<br><br>
+</font>
+</center>
+
+The stress value of this table is 62, hence the fitness value is -62. The fitness
+values of the other three individuals in the population are -64, -60 and -64.<br><br>
+
+Mutation: After the mutation operator was applied to either of the eight permutations with
+a predetermined mutation probability, we get the following result:
+
+ <center>
+After MUTATION<br>
+<font size="+2">
+<table>
+<tr>
+<td>1</td><td>3</td><td>2</td><td>4</td>
+</tr>
+<tr>
+<td><font color="#FF0000">2</font></td><td>4</td><td><font color="#FF0000">1</font></td><td>2</td>
+</tr>
+<tr>
+<td><font color="#FF0000">4</font></td><td>2</td><td><font color="#FF0000">4</font></td><td>3</td>
+</tr>
+<tr>
+<td><u><font color="#FF0000">3</font></u></td><td><u>1</u></td><td><u>3</u></td><td><u>1</u></td>
+</tr>
+<tr>
+<td>4</td><td>2</td><td>3</td><td><font color="#FF0000">3</font></td>
+</tr>
+<tr>
+<td>3</td><td><font color="#FF0000">4</font></td><td>5</td><td><font color="#FF0000">2</font></td>
+</tr>
+<tr>
+<td>1</td><td><font color="#FF0000">1</font></td><td>1</td><td><font color="#FF0000">5</font></td>
+</tr>
+<tr>
+<td>5</td><td><font color="#FF0000">5</font></td><td>2</td><td><font color="#FF0000">1</font></td>
+</tr>
+ <tr>
+<td>2</td><td><font color="#FF0000">3</font></td><td>4</td><td><font color="#FF0000">4</font></td>
+</tr>
+</table>
+<br><br>
+</font>
+</center>
+
+
+Crossover: A random number (X) of pairs is chosen randomly. The random variable X can be
+defined as a binomial random variable with n=popsize=4 and p=0.5.
+For the given example only one pair is chosen. The pair consists of the individuals
+2 and 3. These elements are recombined and take the place of their parents.<br>
+
+ <center>
+After CROSSOVER<br>
+<font size="+2">
+<table>
+<tr>
+<td>1</td><td><font color="#FF0000">2</font></td><td><font color="#FF0000">3</font></td><td>4</td>
+</tr>
+<tr>
+<td>2</td><td><font color="#FF0000">1</font></td><td><font color="#FF0000">4</font></td><td>2</td>
+</tr>
+<tr>
+<td>4</td><td><font color="#FF0000">4</font></td><td><font color="#FF0000">2</font></td><td>3</td>
+</tr>
+<tr>
+<td><u>3</u></td><td><u><font color="#FF0000">3</font></u></td><td><u><font color="#FF0000">1</font></u></td><td><u>1</u></td>
+</tr>
+<tr>
+<td>4</td><td>2</td><td>3</td><td>3</td>
+</tr>
+<tr>
+<td>3</td><td>4</td><td>5</td><td>2</td>
+</tr>
+<tr>
+<td>1</td><td>1</td><td>1</td><td>5</td>
+</tr>
+<tr>
+<td>5</td><td>5</td><td>2</td><td>1</td>
+</tr>
+ <tr>
+<td>2</td><td>3</td><td>4</td><td>4</td>
+</tr>
+</table>
+<br><br>
+</font>
+</center>
+
+The fitness values of these four individuals are -64, -62, -60 and -64.<br><br>
+
+
+Selection: In the selection step all the elements are replaced. Successively,
+pairs of elements are drawn randomly. The one with the higher fitness is
+copied to the next generation.<br>
+Since in this case the population consists of 4 individuals, we have to perform
+4 tournaments:<br>
+Tournament 1: 1 vs 2 -> 2 wins.<br>
+Tournament 2: 1 vs. 4 -> tie (toss a coin and 1 wins).<br>
+Tournament 3: 2 vs. 3: 3 wins.<br>
+Tournament 4: 3 vs. 4: 3 wins.<br><br>
+
+These tournaments yield the new population after a complete iteration step.
+After the first iteration step, the maximum fitness in the population is -60 (this
+is not better than the fitness in the start population, but Rome wasn't built in
+a day, too). In order to make sure that the fitness value does not decrease,
+the fittest individual might be copied to the next generation.<br><br>
+
+
+
+Stefan Niermann
+14.09.2004
+
+</body>
+</html>

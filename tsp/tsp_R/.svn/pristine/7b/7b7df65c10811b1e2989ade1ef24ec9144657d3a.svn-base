@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta name="keywords" content="Traveling salesman problem, TSP solver" />
+        <title>
+            TSP - The traveling salesperson Problem package for R
+        </title>
+        <link rel=stylesheet type="text/css" href="css/hahsler.css">
+
+
+    </head>
+    <body>
+        <h1>
+            The TSP package for R
+        </h1>
+
+<p>
+	The traveling salesperson problem (TSP) is a well known
+        and important combinatorial optimization problem. The goal is
+        to find the shortest tour that visits each city in a given list
+        exactly once and then returns to the starting city.
+   </p>
+   <p>
+        The TSP package offers a simple infrastructure to handle and
+        solve TSPs.
+        </p>
+        <h2>
+            Features
+        </h2>
+        <ul>
+            <li>Data structures for TSPs, ATSPs (asymmetric TSPs) and
+            tours.
+            </li>
+            <li>Many TSP solvers (nearest neighbor, 
+            nearest/farthest/cheapest insertion, 2-opt,
+            Lin-Kernighan, Concorde)
+            </li>
+            <li>Easy integration with other R packages.
+            </li>
+        </ul>
+        <h2>
+            Example
+        </h2>
+        <p>
+        A simple example using the data set of 312 cities in North America (USA and Canada) which comes with the package. The result is visualized with the R-package map (code is available in the introductory paper below).
+        </p>
+        <table border="0" width="80%" align="center">
+            <tr valign="top">
+                <td>
+<div style="overflow:auto"><div class="geshifilter"><pre class="r geshifilter-R" style="font-family:monospace;"><span style="">R&gt;</span> <span style="color: #666666; font-style: italic;">## load library and read data</span>
+<span style="">R&gt;</span> <a href="http://inside-r.org/r-doc/base/library"><span style="color: #003399; font-weight: bold;">library</span></a><span style="color: #009900;">&#40;</span><span style="color: #0000ff;">&quot;TSP&quot;</span><span style="color: #009900;">&#41;</span>
+<span style="">R&gt;</span> <a href="http://inside-r.org/r-doc/utils/data"><span style="color: #003399; font-weight: bold;">data</span></a><span style="color: #009900;">&#40;</span><span style="color: #0000ff;">&quot;USCA312&quot;</span><span style="color: #009900;">&#41;</span>
+&nbsp;
+<span style="">R&gt;</span> <span style="color: #666666; font-style: italic;">## create a TSP object from the data </span>
+<span style="">R&gt;</span> <span style="color: #003399; font-weight: bold;">tsp</span> <span style="">&lt;-</span> <a href="http://inside-r.org/packages/cran/TSP"><span style="">TSP</span></a><span style="color: #009900;">&#40;</span>USCA312<span style="color: #009900;">&#41;</span>
+<span style="">R&gt;</span> <span style="color: #003399; font-weight: bold;">tsp</span>
+&nbsp;
+object of <a href="http://inside-r.org/r-doc/base/class"><span style="color: #003399; font-weight: bold;">class</span></a> <span style="color: #0000ff;">'TSP'</span>
+<span style="color: #cc66cc;">312</span> cities <span style="color: #009900;">&#40;</span>distance   <span style="color: #0000ff;">'euclidean'</span><span style="color: #009900;">&#41;</span>
+&nbsp;
+<span style="">R&gt;</span> <span style="color: #666666; font-style: italic;">## find a 2-optimal solution </span>
+<span style="">R&gt;</span> tour <span style="">&lt;-</span> solve_TSP<span style="color: #009900;">&#40;</span><span style="color: #003399; font-weight: bold;">tsp</span><span style="color: #339933;">,</span> method = <span style="color: #0000ff;">&quot;2-opt&quot;</span><span style="color: #009900;">&#41;</span>
+<span style="">R&gt;</span> tour
+&nbsp;
+object of <a href="http://inside-r.org/r-doc/base/class"><span style="color: #003399; font-weight: bold;">class</span></a> <span style="color: #0000ff;">'TOUR'</span>
+result of method <span style="color: #0000ff;">'2-opt'</span> <span style="color: #000000; font-weight: bold;">for</span> <span style="color: #cc66cc;">312</span> cities
+tour <a href="http://inside-r.org/r-doc/base/length"><span style="color: #003399; font-weight: bold;">length</span></a><span style="">:</span> <span style="color: #cc66cc;">41381</span></pre></div></div>
+			<!--
+			<p><a href="http://www.inside-r.org/pretty-r" title="Created by Pretty R at inside-R.org">Created by Pretty R at inside-R.org</a></p>
+			-->
+			<!--
+                    <b>
+<pre>
+R&gt; ## load library and read data
+R&gt; library("TSP")
+R&gt; data("USCA312")
+
+R&gt; ## create a TSP object from the data 
+R&gt; tsp &lt;- TSP(USCA312)
+R&gt; tsp
+
+object of class 'TSP'
+312 cities (distance   'euclidean')
+
+R&gt; ## find a 2-optimal solution 
+R&gt; tour &lt;- solve_TSP(tsp, method = "2-opt")
+R&gt; tour
+
+object of class 'TOUR'
+result of method '2-opt' for 312 cities
+tour length: 41381
+</pre>
+			-->
+
+
+                    </b>
+                </td>
+                <td valign="middle">
+                    <img src="TSP-004.png" />
+                </td>
+            </tr>
+        </table>
+        <h2>
+            Download &amp; Installation
+        </h2>
+        <ul>
+            <li> <a href="http://cran.r-project.org/package=TSP">Stable release on CRAN</a>  </li>
+            <li> <a href="http://r-forge.r-project.org/projects/tsp/">Development version on R-Forge (Bug tracker, etc.)</a>  </li>
+	    </ul>
+	    
+	    <p>Or install directly in R via: R&gt; <span style="color: #003399; font-weight: bold;">install.packages</span>(<span style="color: #0000ff;">&quot;TSP&quot;</span>)</p>	    
+	    
+    <h2>
+            Further Information
+        </h2>
+	    <ul>
+	    <li>Michael Hahsler and Kurt Hornik, <a href="http://www.jstatsoft.org/v23/i02/paper">TSP - Infrastructure for the Traveling Salesperson
+	    Problem,</a> Journal of Statistical Software 22(2), 2007</li>
+	    <li> <a href="http://cran.r-project.org/web/packages/TSP/vignettes/TSP.pdf">Introductory paper with complete examples</a>  </li>
+            <li> <a href="http://cran.r-project.org/web/packages/TSP/TSP.pdf">Reference manual</a>  </li>
+            <li><a href="http://www.tsp.gatech.edu/concorde.html">  
+            Concorde TSP solver home page</a></li>
+        </ul>
+
+	<hr>
+	&copy; <a href="http://michael.hahsler.net">Michael Hahsler</a><br />
+	Last update: <script type="text/javascript">
+	    //<![CDATA[
+	    <!--
+	    document.write(document.lastModified.toString());
+	    //-->
+	    //]]>
+	</script>
+	
+    </body>
+</html>

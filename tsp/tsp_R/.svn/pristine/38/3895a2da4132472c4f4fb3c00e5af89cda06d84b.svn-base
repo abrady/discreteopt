@@ -1,0 +1,9 @@
+# usca312_main.txt
+#
+#  312 US and Canadian cities.
+#
+size  312
+geom  sphere
+dist  usca312_dist.txt
+dms   usca312_dms.txt
+name  usca312_name.txt

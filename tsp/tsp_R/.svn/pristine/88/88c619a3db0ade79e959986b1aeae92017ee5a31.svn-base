@@ -1,0 +1,55 @@
+
+a:hover {  font-family: Arial, sans-serif; color: #1E426E}
+
+body {  font-family: Arial, sans-serif; font-style: normal; line-height: normal; font-weight: normal; font-variant: normal; color: #000000; text-decoration: none; background-color: #FFFFFF; list-style-type: square; margin-left: 20px; margin-right: 20px;}
+
+a { font-family: Arial, sans-serif; font-style: normal; line-height: normal; font-variant: normal; text-decoration: underline; color: #1E426E}
+
+address { font-family: Arial, sans-serif; font-style: normal; line-height: normal; font-variant: normal; font-weight: normal; letter-spacing: 0.5px}
+
+/*
+h1 {  font-family: Arial, sans-serif; font-weight: bold; font-style: normal; line-height: normal; font-variant: normal; color: #000000 }
+*/
+
+p { font-family: Arial, sans-serif; font-style: normal; line-height: normal; font-variant: normal; text-decoration: none; color: #000000; margin-left:20px; }
+
+input { font-family: Arial, sans-serif; font-style: normal; line-height: normal; font-variant: normal; text-decoration: none; color: #000000 ; font-size: 14px}
+
+.bold {  font-weight: bolder}
+
+.small { font-family: Arial, sans-serif; font-style: normal; line-height: normal; font-variant: normal; font-weight: normal}
+
+blockquote { margin-bottom: 30px }
+
+/*
+hr { color:#a0a0a0;  background-color:#a0a0a0; border:0; height: 2px}
+*/
+
+hr { color:#900000; margin-top:15px; border-width:1px; border-bottom-style:solid; }
+
+.mitarbeiter { text-align: left;}
+
+
+/* hahsler */
+
+/* h1 { border:2px solid #a0a0a0; background-color:#E0E0e7; padding:4px; margin:0px; margin-bottom:6px; color:#900000; }
+*/
+/* h1 { padding:4px; margin:0px; margin-bottom:6px; color:#900000; text-decoration:underline; } */
+h1 { padding:2px; padding-left:10px; margin:0px; margin-bottom:2px; color:#ffffff; background-color:#900000; border-radius: 5px; }
+
+
+h2 { font-style: oblique; color:#900000; margin:15px 0px 0px 0px; border-width:1px; border-bottom-style:dotted;}
+
+h3 {color:#000000; } 
+
+b.red { color:#900000; }
+
+address { font-size:small; }
+
+img { border-style: none; }
+
+ul {list-style-type:square; margin:4px; }
+
+/*
+hr { background-color:#E0E0E0; border:1px solid grey; }
+*/
